@@ -27,6 +27,29 @@ class MessageScheduler {
                 print("Notification scheduled successfully!")
             }
         }
+
+        // Schedule a background task to send the message at the specified time
+        scheduleBackgroundTask(at: date)
+    }
+
+    private func scheduleBackgroundTask(at date: Date) {
+        // Ensure that the app has background capabilities enabled
+        UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalMinimum)
+
+        // Schedule a background task
+        let taskIdentifier = UIApplication.shared.beginBackgroundTask { [weak self] in
+            // Perform cleanup when the background task is ending
+            UIApplication.shared.endBackgroundTask(taskIdentifier)
+        }
+
+        // Perform the background task (send the message) after a delay
+        DispatchQueue.global().asyncAfter(deadline: .now() + date.timeIntervalSinceNow) {
+            // TODO: Implement the code to send the message here
+            print("Sending scheduled message")
+
+            // End the background task when the operation is complete
+            UIApplication.shared.endBackgroundTask(taskIdentifier)
+        }
     }
 }
 
