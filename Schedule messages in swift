@@ -1,0 +1,40 @@
+import UIKit
+import UserNotifications
+
+class MessageScheduler {
+
+    func scheduleMessage(message: String, at date: Date) {
+        // Create a notification content
+        let content = UNMutableNotificationContent()
+        content.title = "Scheduled Message"
+        content.body = message
+        content.sound = UNNotificationSound.default
+
+        // Extract components from the specified date
+        let components = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
+
+        // Create a trigger for the specified date
+        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
+
+        // Create a notification request
+        let request = UNNotificationRequest(identifier: "ScheduledMessage", content: content, trigger: trigger)
+
+        // Add the notification request to the user notification center
+        UNUserNotificationCenter.current().add(request) { (error) in
+            if let error = error {
+                print("Error scheduling notification: \(error.localizedDescription)")
+            } else {
+                print("Notification scheduled successfully!")
+            }
+        }
+    }
+}
+
+// Example usage
+let scheduler = MessageScheduler()
+
+// Schedule a message at a specific date and time
+let currentDate = Date()
+let scheduledDate = Calendar.current.date(byAdding: .minute, value: 5, to: currentDate)!
+
+scheduler.scheduleMessage(message: "Hello, this is a scheduled message!", at: scheduledDate)
